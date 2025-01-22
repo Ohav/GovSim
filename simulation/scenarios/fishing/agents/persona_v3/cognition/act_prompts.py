@@ -4,6 +4,8 @@ from simulation.persona.common import PersonaIdentity
 from simulation.utils import ModelWandbWrapper
 from pathfinder import assistant, system, user
 
+from simulation.interventions import feature_utils
+
 from .utils import (
     consider_identity_persona_prompt,
     conversation_to_string_with_dash,
@@ -44,6 +46,17 @@ def prompt_action_choose_amount_of_fish_to_catch(
             stop_regex=r"Answer:|So, the answer is:|\*\*Answer\*\*:",
             save_stop_text=True,
         )
+        
+        ## Intervention features
+        logprobs = lm.last_logprobs
+        if logprobs is not None:
+            raw_collections, _ = feature_utils.get_gen_metrics(logprobs)
+            conv_features = dict()
+            for feature in raw_collections.keys():
+                conv_features[f'max {feature}'] = max(raw_collections[feature])
+        else:
+            conv_features = None
+
         lm = model.find(
             lm,
             regex=r"\d+",
@@ -55,5 +68,4 @@ def prompt_action_choose_amount_of_fish_to_catch(
         reasoning = lm["reasoning"]
 
     model.end_chain(identity.name, lm)
-
-    return option, lm.html()
+    return option, lm.html(), conv_features

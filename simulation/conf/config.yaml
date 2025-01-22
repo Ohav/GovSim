@@ -16,7 +16,7 @@ debug: false
   
 
 defaults:
-- experiment: basic
+- experiment: fish_baseline_concurrent
 
 
 hydra:
@@ -26,3 +26,10 @@ hydra:
     - ./simulation/scenarios/fishing/conf
     - ./simulation/scenarios/sheep/conf
     - ./simulation/scenarios/pollution/conf
+
+experiment:
+  intervention:
+    agent_resets: 0
+    type: 'conversation'
+    clf: 'None'
+    threshold: 1

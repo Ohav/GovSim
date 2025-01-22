@@ -31,7 +31,7 @@ class FishingActComponent(ActComponent):
     ):
         if self.cfg.universalization_prompt:
             context += get_universalization_prompt(overusage_threshold)
-        res, html = prompt_action_choose_amount_of_fish_to_catch(
+        res, html, conv_features = prompt_action_choose_amount_of_fish_to_catch(
             self.model,
             self.persona.identity,
             retrieved_memories,
@@ -42,4 +42,4 @@ class FishingActComponent(ActComponent):
             consider_identity_persona=self.cfg.consider_identity_persona,
         )
         res = int(res)
-        return res, [html]
+        return res, [html], conv_features
