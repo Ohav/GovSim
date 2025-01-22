@@ -102,21 +102,22 @@ class PersonaAction:
     html_interactions: list[str]
 
     def __init__(
-        self, agent_id, location: str, stats={}, html_interactions=None
+        self, agent_id, location: str, stats={}, html_interactions=None, conv_features=None
     ) -> None:
         self.agent_id = agent_id
         self.location = location
         self.stats = stats
         self.html_interactions = html_interactions
+        self.conv_features = conv_features
 
 
 class PersonaActionHarvesting(PersonaAction):
     quantity: int
 
     def __init__(
-        self, agent_id, location: str, quantity: int, stats={}, html_interactions=None
+        self, agent_id, location: str, quantity: int, stats={}, html_interactions=None, conv_features=None
     ) -> None:
-        super().__init__(agent_id, location, stats, html_interactions)
+        super().__init__(agent_id, location, stats, html_interactions, conv_features)
         self.quantity = quantity
 
 

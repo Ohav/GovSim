@@ -106,6 +106,7 @@ class ModelWandbWrapper:
                 top_p=top_p,
                 save_stop_text=save_stop_text,
             )
+            logprobs = lm.last_logprobs
             res = lm[name]
         except Exception as e:
             warnings.warn(
@@ -114,6 +115,7 @@ class ModelWandbWrapper:
             )
             res = default_value
             lm = previous_lm.set(name, default_value)
+            logprobs = None
         finally:
             if self.render:
                 print(lm)
@@ -138,6 +140,9 @@ class ModelWandbWrapper:
                 token_usage_out=lm.token_out,
                 model_name=lm.model_name,
             )
+                
+            self.wanbd_logger.log_action_logprobs(name, logprobs)
+
             self.seed += 1
             return lm
 

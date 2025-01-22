@@ -82,7 +82,7 @@ class FishingPersona(PersonaAgent):
             # Stage 1. Pond situation / Stage 2. Fishermen’s decisions
             retireved_memory = self.retrieve.retrieve([obs.current_location], 10)
             if obs.current_resource_num > 0:
-                num_resource, html_interactions = self.act.choose_how_many_fish_to_chat(
+                num_resource, html_interactions, conv_features = self.act.choose_how_many_fish_to_chat(
                     retireved_memory,
                     obs.current_location,
                     obs.current_time,
@@ -90,12 +90,14 @@ class FishingPersona(PersonaAgent):
                     range(0, obs.current_resource_num + 1),
                     obs.before_harvesting_sustainability_threshold,
                 )
+                print("Persona: ", conv_features)
                 action = PersonaActionHarvesting(
                     self.agent_id,
                     "lake",
                     num_resource,
                     stats={f"{self.agent_id}_collected_resource": num_resource},
                     html_interactions=html_interactions,
+                    conv_features=conv_features
                 )
             else:
                 num_resource = 0
