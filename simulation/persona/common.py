@@ -18,6 +18,7 @@ class PersonaIdentity:
         self.goals = goals
         self.behavior = behavior
         self.customs = customs
+        self.max_resource_num = -1
 
     def get_identiy_stable_set(self) -> str:
         # Before we also used: lm += f"Here is a brief description of {persona.name}."

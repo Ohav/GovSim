@@ -74,7 +74,7 @@ class FishingPersona(PersonaAgent):
     def loop(self, obs: HarvestingObs) -> PersonaAction:
         res = []
         self.current_time = obs.current_time  # update current time
-
+        self.identity.max_resource_num = obs.max_resource_num
         self.perceive.perceive(obs)
         # phase based game
 
@@ -131,7 +131,7 @@ class FishingPersona(PersonaAgent):
                 obs.current_location,
                 obs.current_time,
                 obs.context,
-                obs.agent_resource_num,
+                obs.agent_resource_num
             )
             action = PersonaActionChat(
                 self.agent_id,

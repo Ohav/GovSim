@@ -94,6 +94,7 @@ class ConcurrentEnv:
             current_resource_num=self.internal_global_state["resource_in_pool"],
             agent_resource_num={agent: 0 for agent in self.agents},
             before_harvesting_sustainability_threshold=sustainability_threshold,
+            max_resource_num=self.cfg.initial_resource_in_pool
         )
         return obs
 
@@ -123,6 +124,7 @@ class ConcurrentEnv:
             before_harvesting_sustainability_threshold=self.internal_global_state[
                 "sustainability_threshold"
             ],
+            max_resource_num=self.cfg.initial_resource_in_pool
         )
         return obs
 
@@ -141,6 +143,7 @@ class ConcurrentEnv:
             before_harvesting_sustainability_threshold=self.internal_global_state[
                 "sustainability_threshold"
             ],
+            max_resource_num=self.cfg.initial_resource_in_pool
         )
         return state
 
@@ -158,6 +161,7 @@ class ConcurrentEnv:
             before_harvesting_sustainability_threshold=self.internal_global_state[
                 "sustainability_threshold"
             ],
+            max_resource_num=self.cfg.initial_resource_in_pool
         )
         return state
 
@@ -214,7 +218,7 @@ class ConcurrentEnv:
             "resource_in_pool": self.cfg.initial_resource_in_pool,
             "resource_before_harvesting": self.cfg.initial_resource_in_pool,
             "sustainability_threshold": (
-                10
+                self.cfg.initial_resource_in_pool / 10
             ),  # each day the fish double and cap at 100, so maximum 50 can be fished
             "collected_resource": {},
             "wanted_resource": {},

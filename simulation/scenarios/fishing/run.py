@@ -100,52 +100,56 @@ def run(
 
     while True:
         agent = personas[agent_id]
+        agent_number = int(agent_id.split('_')[-1])
         action = agent.loop(obs)
 
-        if (action.conv_features is not None) and (env.phase == env.POOL_LOCATION) and (env.num_round > 0):
+        if (env.phase == env.POOL_LOCATION) and (env.num_round > 0) and (agent.num_resets > 0):
             # Attempt intervention
             features = action.conv_features
             if cfg.intervention.type == 'conversation':
-                for k in features:
-                    collected_features[k].append(features[k])
+                if features is not None:
+                    for k in features:
+                        collected_features[k].append(features[k])
                 
-                if len(collected_features['max entropy']) == num_personas:
-                    classifier_features = min(collected_features['max entropy']), min(collected_features['max varentropy']), min(collected_features['max kurtosis'])
-                    collecteD_features = {k: [] for k in collected_features.keys()}
+                print(agent_number, num_personas - 1)
+                if agent_number == num_personas - 1:
+                    if len(collected_features['max entropy']) > 0:
+                        classifier_features = min(collected_features['max entropy']), min(collected_features['max varentropy']), min(collected_features['max kurtosis'])
                     
-                    classifier_score = classifier(env.num_round, classifier_features[0], classifier_features[1], classifier_features[2])
-                    print(f"Got score: {classifier_score}")
-                    if (classifier_score > threshold) and (agent.num_resets > 0):
-                        agent.num_resets -= 1
-                        # Lower rounds by one
-                        env.num_round -= 1
+                        classifier_score = classifier(env.num_round, classifier_features[0], classifier_features[1], classifier_features[2])
+                        print(f"Got score: {classifier_score}")
+                        if (classifier_score > threshold) and (agent.num_resets > 0):
+                            agent.num_resets -= 1
+                            # Lower rounds by one
+                            env.num_round -= 1
 
-                        print(f"Decided to reset conversation! {agent_id}")
-                        for agent_selection in env.agents:
-                            env.internal_global_state["next_location"][agent_selection] = "restaurant"
-                            
-                            # Reset time to the discussion time earlier
-                            cur_time = env.internal_global_state["next_time"][agent_selection]
-                            last_month = cur_time.replace(month=cur_time.month - 1)
-                            env.internal_global_state["next_time"][agent_selection] = (get_discussion_day(last_month))
+                            print(f"Decided to reset conversation! {agent_id}")
+                            for agent_selection in env.agents:
+                                env.internal_global_state["next_location"][agent_selection] = "restaurant"
+                                
+                                # Reset time to the discussion time earlier
+                                cur_time = env.internal_global_state["next_time"][agent_selection]
+                                last_month = cur_time.replace(month=cur_time.month - 1)
+                                env.internal_global_state["next_time"][agent_selection] = (get_discussion_day(last_month))
 
-                            print("Clean last week thoughts")
-                            thoughts = list(agent.memory.thought_id_to_node.keys())
-                            week_ago = cur_time - timedelta(days=7)
-                            for k in thoughts:
-                                if (agent.memory.thought_id_to_node[k].created > week_ago):
-                                    del agent.memory.thought_id_to_node[k]
+                                print("Clean last week thoughts")
+                                thoughts = list(agent.memory.thought_id_to_node.keys())
+                                week_ago = cur_time - timedelta(days=7)
+                                for k in thoughts:
+                                    if (agent.memory.thought_id_to_node[k].created > week_ago):
+                                        del agent.memory.thought_id_to_node[k]
+                                
                             
-                        
                             # Insert "restaurant" obs to first agent, forcing entire group to recreate the conversation
-                        first_agent = env._agent_selector.reset()
-                        env.agent_selection = first_agent
-                        while env.phase != 'restaurant':
-                            env.phase = env._phase_selector.next()
-                        
-                        obs = env._observe_restaurant(first_agent)
-                        action = personas[first_agent].loop(obs)
-                        print("finished intervention")
+                            first_agent = env._agent_selector.reset()
+                            env.agent_selection = first_agent
+                            while env.phase != 'restaurant':
+                                env.phase = env._phase_selector.next()
+                            
+                            obs = env._observe_restaurant(first_agent)
+                            action = personas[first_agent].loop(obs)
+                            print("finished intervention")
+                    collected_features = {'max entropy': [], 'max varentropy': [], 'max kurtosis': []}
 
                     
             elif cfg.intervention.type == 'reflection':
@@ -205,11 +209,9 @@ def get_classifier_function(classifier_path):
     sys.path.append('/home/morg/students/ohavbarbi/multiAgent/')
     import pickle
     import torch
-    if classifier_path == "Linear":
-        def linear_classifier(turn, entropy, varentropy, kurtosis):
-            norm_params = (6.321957870168004e-09, 1.105892456367376)
-            entropy = (entropy - norm_params[0]) / (norm_params[1] - norm_params[0])
-            return entropy
+    if classifier_path == "Random":
+        def random_classifier(turn, entropy, varentropy, kurtosis):
+            return np.random.random()
         return linear_classifier
     
     with open(classifier_path, 'rb') as f:

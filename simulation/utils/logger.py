@@ -168,16 +168,6 @@ class WandbLogger:
 
         chain_agent.add_child(chain_span)
 
-    def log_action_logprobs(self, action_name, action_logprobs):
-        if self.current_agent_name not in self.logprobs_dict:
-            self.logprobs_dict[self.current_agent_name] = dict()
-
-        if action_name not in self.logprobs_dict[self.current_agent_name]:
-            self.logprobs_dict[self.current_agent_name][action_name] = []    
-
-        self.logprobs_dict[self.current_agent_name][action_name].append(action_logprobs)
-
-
     def save(self, base_path, agent_name_to_id: dict[str, str]):
         for k, v in self.html_logs.items():
             html = f"""
@@ -195,9 +185,18 @@ class WandbLogger:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             # weasyprint.HTML(string=html).write_pdf(path)
         
-        print("Saving dict!", base_path + '/logprobs.json')
-        with open(base_path + '/logprobs.json', 'w') as f:
-            json.dump(self.logprobs_dict, f)
+        # print("Saving dict!", base_path + '/logprobs.json')
+        # with open(base_path + '/logprobs.json', 'w') as f:
+        #     json.dump(self.logprobs_dict, f)
+
+    def log_action_logprobs(self, action_name, action_logprobs):
+        if self.current_agent_name not in self.logprobs_dict:
+            self.logprobs_dict[self.current_agent_name] = dict()
+
+        if action_name not in self.logprobs_dict[self.current_agent_name]:
+            self.logprobs_dict[self.current_agent_name][action_name] = []    
+
+        self.logprobs_dict[self.current_agent_name][action_name].append(action_logprobs)
 
     def log_game(self, kwargs, last_log=False):
         if last_log and self.current_agent_span is not None:

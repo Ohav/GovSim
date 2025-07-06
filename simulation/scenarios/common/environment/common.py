@@ -20,6 +20,7 @@ class HarvestingObs(PersonaOberservation):
         current_resource_num: int,
         agent_resource_num: dict[str, int],
         before_harvesting_sustainability_threshold: int,
+        max_resource_num: int
     ) -> None:
         super().__init__(
             phase,
@@ -28,10 +29,11 @@ class HarvestingObs(PersonaOberservation):
             current_time,
             events,
             context,
-            chat,
+            chat
         )
         self.current_resource_num = current_resource_num
         self.agent_resource_num = agent_resource_num
         self.before_harvesting_sustainability_threshold = (
             before_harvesting_sustainability_threshold
         )
+        self.max_resource_num = max_resource_num

@@ -29,7 +29,7 @@ class FishingActComponent(ActComponent):
         context: str,
         interval: list[int],
         overusage_threshold: int,
-    ):
+):
         if self.cfg.universalization_prompt:
             context += get_universalization_prompt(overusage_threshold)
         res, html, conv_features = prompt_action_choose_amount_of_fish_to_catch(

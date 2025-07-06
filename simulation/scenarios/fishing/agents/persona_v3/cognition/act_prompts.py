@@ -31,7 +31,10 @@ def prompt_action_choose_amount_of_fish_to_catch(
     lm = model.start_chain(identity.name, "fishing_cognition_act", "choose_act_options")
 
     with user():
-        lm += f"{get_sytem_prompt(identity)}\n"
+        system_prompt = get_sytem_prompt(identity)
+        system_prompt = system_prompt.replace('100', str(identity.max_resource_num)).replace('<X>', str(identity.max_resource_num - 10)).replace('<X-30>', str(identity.max_resource_num - 40))
+
+        lm += f"{system_prompt}\n"
         lm += location_time_info(current_location, current_time)
         lm += memory_prompt(identity, memories)
         lm += f"\n"

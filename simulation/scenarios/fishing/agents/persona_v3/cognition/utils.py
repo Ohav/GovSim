@@ -109,22 +109,22 @@ SYS_VERSION = "v1"
 
 def get_sytem_prompt(persona):
     if SYS_VERSION == "v1":
-        return get_sytem_prompt_v1(persona)
+        return get_sytem_prompt_v1(persona, persona.max_resource_num)
     elif SYS_VERSION == "v3":
-        return get_sytem_prompt_v3(persona)
+        return get_sytem_prompt_v3(persona, persona.max_resource_num)
     elif SYS_VERSION == "v3_p1":
-        return get_sytem_prompt_v3_p1(persona)
+        return get_sytem_prompt_v3_p1(persona, persona.max_resource_num)
     elif SYS_VERSION == "v3_p2":
-        return get_sytem_prompt_v3_p2(persona)
+        return get_sytem_prompt_v3_p2(persona, persona.max_resource_num)
     elif SYS_VERSION == "v3_p3":
-        return get_sytem_prompt_v3_p3(persona)
+        return get_sytem_prompt_v3_p3(persona, persona.max_resource_num)
     elif SYS_VERSION == "v3_nocom":
-        return get_sytem_prompt_v3_nocom(persona)
+        return get_sytem_prompt_v3_nocom(persona, persona.max_resource_num)
     else:
         raise ValueError(f"Unknown SYS_VERSION: {SYS_VERSION}")
 
 
-def get_sytem_prompt_v1(persona):
+def get_sytem_prompt_v1(persona, max_resource_num):
     persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
@@ -133,7 +133,7 @@ def get_sytem_prompt_v1(persona):
         " The lake has a population capacity of 100 tons of fish."
         " Each month, each fisherman decides how many fish to take out of the lake between 0 and 100 tons."
         " At the end of the month, the remaining fish reproduce and double up to the population capacity."
-        " So if there are 60 tons of fish remaining, there will be 100 tons after reproduction, or if there are 20 tons of fish remaining,"
+        " So if there are <X> tons of fish remaining, there will be 100 tons after reproduction, or if there are 20 tons of fish remaining,"
         " there will be 40 tons of fish after reproduction."
         " For each ton of fish caught, a fisherman earns one thousand dollars."
         " Each fisherman's goal is to optimize their income in the long run over many months."
@@ -143,11 +143,12 @@ def get_sytem_prompt_v1(persona):
 
     if persona.goals != "":
         text += persona.goals
+    # text = text.replace('100', str(max_resource_num)).replace('<X>', str(max_resource_num - 10)).replace('<X-30>', str(max_resource_num - 40))
 
     return text
 
 
-def get_sytem_prompt_v3(persona):
+def get_sytem_prompt_v3(persona, max_resource_num):
     persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
@@ -160,17 +161,17 @@ def get_sytem_prompt_v3(persona):
         " Each fisherman's goal is to optimize his income in the long run over many months."
         " At the end of each month, the number of fish caught by each fisherman will be revealed, and the fishermen will have the opportunity to communicate with each other."
         " They can use this as an opportunity to negotiate and persuade others to influence their behavior in the next month."
-        " For example, if there are 90 tons of fish at the beginning of the month and the five fishermen catch a total of 30 fish,"
-        " there will be 60 tons of fish left at the end of the month before reproduction, and 100 tons after reproduction."
+        " For example, if there are <X> tons of fish at the beginning of the month and the five fishermen catch a total of 30 fish,"
+        " there will be <X-30> tons of fish left at the end of the month before reproduction, and 100 tons after reproduction."
     )
 
     if persona.goals != "":
         text += persona.goals
-
+    # text = text.replace('100', str(max_resource_num)).replace('<X>', str(max_resource_num - 10)).replace('<X-30>', str(max_resource_num - 40))
     return text
 
 
-def get_sytem_prompt_v3_p1(persona):
+def get_sytem_prompt_v3_p1(persona, max_resource_num):
     persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
@@ -181,11 +182,12 @@ def get_sytem_prompt_v3_p1(persona):
 
     if persona.goals != "":
         text += persona.goals
+    # text = text.replace('100', str(max_resource_num)).replace('<X>', str(max_resource_num - 10)).replace('<X-30>', str(max_resource_num - 40))
 
     return text
 
 
-def get_sytem_prompt_v3_p2(persona):
+def get_sytem_prompt_v3_p2(persona, max_resource_num):
     persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
@@ -195,17 +197,17 @@ def get_sytem_prompt_v3_p2(persona):
         " The chosen amount is then removed from the lake. After the month ends, the remaining fish population doubles, but won't exceed the 100-ton limit."
         " Fishermen earn $1,000 per ton of fish caught. The long-term goal for each fisherman is to maximize their income over many months."
         " At each month's end, everyone's catch is disclosed, and the group can discuss and potentially influence each other's future actions through negotiation and persuasion."
-        " To illustrate: if the lake starts with 90 tons of fish and the five fishermen collectively catch 30 tons, 60 tons will remain before reproduction."
+        " To illustrate: if the lake starts with <X> tons of fish and the five fishermen collectively catch 30 tons, <X-30> tons will remain before reproduction."
         " After reproduction, the lake will be back at its full capacity of 100 tons."
     )
 
     if persona.goals != "":
         text += persona.goals
-
+    # text = text.replace('100', str(max_resource_num)).replace('<X>', str(max_resource_num - 10)).replace('<X-30>', str(max_resource_num - 40))
     return text
 
 
-def get_sytem_prompt_v3_p3(persona):
+def get_sytem_prompt_v3_p3(persona, max_resource_num):
     persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
@@ -213,10 +215,11 @@ def get_sytem_prompt_v3_p3(persona):
         f"Imagine you're {persona.name}, one of five fishermen (including {list_string_persona_name}) who fish monthly in a lake with a maximum fish population of 100 tons. At the start of each month, you all independently decide how much to fish, with options ranging from 0 to 100 tons. Your catches are then removed from the lake. "
         "Once the month concludes, the lake's fish population regenerates, doubling in size but never surpassing the 100-ton limit. Each ton of fish caught translates to $1,000 in earnings. Your objective, like that of your fellow fishermen, is to maximize your long-term profits over an extended period. "
         "Monthly, after everyone's catch is revealed, you have a chance to interact with the other fishermen. This opens up possibilities for negotiation and attempts to sway future fishing decisions. "
-        "For instance, if the lake contains 90 tons at the month's start, and the group's total catch is 30 tons, the lake will be left with 60 tons. Following reproduction, it will replenish to its full 100-ton capacity."
+        "For instance, if the lake contains <X> tons at the month's start, and the group's total catch is 30 tons, the lake will be left with <X-30> tons. Following reproduction, it will replenish to its full 100-ton capacity."
     )
     if persona.goals != "":
         text += persona.goals
+    # text = text.replace('100', str(max_resource_num)).replace('<X>', str(max_resource_num - 10)).replace('<X-30>', str(max_resource_num - 40))
 
     return text
 
